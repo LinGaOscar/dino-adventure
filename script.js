@@ -28,6 +28,7 @@ let obstaclesPassed = 0;
 let flyModeActive = false;
 let flyModeEndTime = 0;
 let confettiParticles = [];
+let graceEndTime = 0;
 
 // Game Config（依 canvas 尺寸動態計算，初始值對應 400px 高度）
 let gravity = 0.6;
@@ -237,6 +238,7 @@ function startFlyMode() {
 
 function endFlyMode() {
     flyModeActive = false;
+    graceEndTime = performance.now() + 1000;
     player.dy = 0;
     player.jumping = true;
     player.jumpCount = 1;
@@ -262,7 +264,7 @@ function gameLoop() {
         obstacles[i].update();
         obstacles[i].draw();
 
-        if (!flyModeActive && checkCollision(player, obstacles[i])) {
+        if (!flyModeActive && performance.now() > graceEndTime && checkCollision(player, obstacles[i])) {
             endGame();
         }
 
@@ -300,6 +302,7 @@ function startGame() {
     obstaclesPassed = 0;
     flyModeActive = false;
     confettiParticles = [];
+    graceEndTime = 0;
     player.y = groundY - player.height;
     player.dy = 0;
     player.jumpCount = 0;
