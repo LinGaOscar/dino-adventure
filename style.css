@@ -149,7 +149,41 @@ button:active {
     animation: pulse 2s infinite ease-in-out;
 }
 
-/* 手機直式 */
+#rotate-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--bg-color);
+    z-index: 1000;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+#rotate-overlay .rotate-icon {
+    font-size: 4rem;
+    animation: rotate-hint 1.5s ease-in-out infinite;
+}
+
+#rotate-overlay p {
+    font-size: 1.2rem;
+    text-align: center;
+    color: var(--primary-color);
+    margin: 0;
+    line-height: 1.8;
+}
+
+@keyframes rotate-hint {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(90deg); }
+}
+
+/* 手機直式：顯示旋轉提示 */
+@media (orientation: portrait) and (max-width: 768px) {
+    #rotate-overlay { display: flex; }
+}
+
 @media (orientation: portrait) and (max-width: 600px) {
     #game-container {
         width: 100vw;
