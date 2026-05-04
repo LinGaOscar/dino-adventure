@@ -26,9 +26,9 @@ body {
 
 #game-container {
     position: relative;
-    width: 100%;
-    max-width: 800px;
-    height: 400px;
+    /* 維持 2:1 比例，同時不超出視口高度 */
+    width: min(800px, 98vw, calc(90vh * 2));
+    aspect-ratio: 2 / 1;
     background: linear-gradient(180deg, #0f0f1a 0%, #1a1a2e 100%);
     border-radius: 20px;
     overflow: hidden;
@@ -147,4 +147,35 @@ button:active {
 
 #start-button {
     animation: pulse 2s infinite ease-in-out;
+}
+
+/* 手機直式 */
+@media (orientation: portrait) and (max-width: 600px) {
+    #game-container {
+        width: 100vw;
+        border-radius: 0;
+    }
+    #ui-layer { padding: 10px; }
+    #title { font-size: 1.4rem; margin-bottom: 5px; }
+    #score-board, #high-score-board { font-size: 0.85rem; padding: 5px 10px; top: 10px; }
+    h2 { font-size: 1.2rem; margin-bottom: 10px; }
+    p { font-size: 0.85rem; margin-bottom: 12px; }
+    button { padding: 10px 22px; font-size: 0.9rem; }
+    #start-screen, #game-over-screen { padding: 20px; width: 88%; }
+}
+
+/* 手機橫式 */
+@media (orientation: landscape) and (max-height: 500px) {
+    body { align-items: center; }
+    #game-container {
+        width: min(98vw, calc(86vh * 2));
+        border-radius: 10px;
+    }
+    #ui-layer { padding: 8px; }
+    #title { font-size: 1.1rem; margin-bottom: 4px; }
+    #score-board, #high-score-board { font-size: 0.75rem; padding: 4px 8px; top: 8px; }
+    h2 { font-size: 1rem; margin-bottom: 8px; }
+    p { font-size: 0.78rem; margin-bottom: 10px; }
+    button { padding: 8px 18px; font-size: 0.82rem; }
+    #start-screen, #game-over-screen { padding: 14px; width: 80%; }
 }

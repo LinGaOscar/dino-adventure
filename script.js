@@ -25,12 +25,12 @@ highScoreEl.textContent = highScore;
 let animationId;
 let frameCount = 0;
 
-// Game Config
-const gravity = 0.6;
-const jumpForce = -12;
-const groundY = 320;
-const dinoSize = 60;
-const obstacleSpeedBase = 5;
+// Game Config（依 canvas 尺寸動態計算，初始值對應 400px 高度）
+let gravity = 0.6;
+let jumpForce = -12;
+let groundY = 320;
+let dinoSize = 60;
+let obstacleSpeedBase = 5;
 
 // Player Object
 const player = {
@@ -74,8 +74,8 @@ let obstacles = [];
 
 class Obstacle {
     constructor() {
-        this.width = 40 + Math.random() * 20;
-        this.height = 50 + Math.random() * 30;
+        this.width = canvas.height * 0.10 + Math.random() * canvas.height * 0.05;
+        this.height = canvas.height * 0.125 + Math.random() * canvas.height * 0.075;
         this.x = canvas.width;
         this.y = groundY - this.height;
         this.speed = obstacleSpeedBase + (score / 100);
@@ -100,6 +100,19 @@ function resize() {
     const container = document.getElementById('game-container');
     canvas.width = container.clientWidth;
     canvas.height = container.clientHeight;
+
+    const scale = canvas.height / 400;
+    groundY = Math.round(canvas.height * 0.80);
+    dinoSize = Math.round(canvas.height * 0.15);
+    gravity = 0.6 * scale;
+    jumpForce = -12 * scale;
+    obstacleSpeedBase = 5 * scale;
+
+    player.width = dinoSize;
+    player.height = dinoSize;
+    if (!player.jumping) {
+        player.y = groundY - player.height;
+    }
 }
 
 window.addEventListener('resize', resize);
