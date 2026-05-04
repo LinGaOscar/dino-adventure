@@ -40,6 +40,7 @@ const player = {
     height: dinoSize,
     dy: 0,
     jumping: false,
+    jumpCount: 0,
     draw() {
         if (dinoImg.complete) {
             ctx.drawImage(dinoImg, this.x, this.y, this.width, this.height);
@@ -59,12 +60,14 @@ const player = {
             this.y = groundY - this.height;
             this.dy = 0;
             this.jumping = false;
+            this.jumpCount = 0;
         }
     },
     jump() {
-        if (!this.jumping) {
+        if (this.jumpCount < 2) {
             this.dy = jumpForce;
             this.jumping = true;
+            this.jumpCount++;
         }
     }
 };
@@ -203,6 +206,7 @@ function startGame() {
     frameCount = 0;
     player.y = groundY - player.height;
     player.dy = 0;
+    player.jumpCount = 0;
     
     startScreen.classList.add('hidden');
     gameOverScreen.classList.add('hidden');
