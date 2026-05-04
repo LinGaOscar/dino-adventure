@@ -1,10 +1,11 @@
 :root {
-    --primary-color: #00ffcc;
-    --secondary-color: #ff0077;
-    --bg-color: #0a0a0f;
-    --text-color: #ffffff;
-    --glass-bg: rgba(255, 255, 255, 0.05);
-    --glass-border: rgba(255, 255, 255, 0.1);
+    --bg: #F5F2EC;
+    --surface: #FAFAF8;
+    --ink: #2C2825;
+    --ink-2: #7A736C;
+    --accent: #B8916A;
+    --border: #E2DCD3;
+    --ground: #D4CEC4;
 }
 
 * {
@@ -14,9 +15,12 @@
 }
 
 body {
-    font-family: 'Outfit', sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-color);
+    font-family: 'DM Mono', monospace;
+    background-color: var(--bg);
+    background-image:
+        radial-gradient(circle at 20% 50%, rgba(184,145,106,0.06) 0%, transparent 60%),
+        radial-gradient(circle at 80% 20%, rgba(44,40,37,0.04) 0%, transparent 50%);
+    color: var(--ink);
     overflow: hidden;
     display: flex;
     justify-content: center;
@@ -26,14 +30,16 @@ body {
 
 #game-container {
     position: relative;
-    /* 維持 2:1 比例，同時不超出視口高度 */
     width: min(800px, 98vw, calc(90vh * 2));
     aspect-ratio: 2 / 1;
-    background: linear-gradient(180deg, #0f0f1a 0%, #1a1a2e 100%);
-    border-radius: 20px;
+    background: var(--surface);
+    border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 255, 204, 0.1);
-    border: 1px solid var(--glass-border);
+    box-shadow:
+        0 2px 1px rgba(44,40,37,0.04),
+        0 8px 32px rgba(44,40,37,0.08),
+        0 24px 64px rgba(44,40,37,0.06);
+    border: 1px solid var(--border);
 }
 
 #gameCanvas {
@@ -57,29 +63,29 @@ body {
 }
 
 #title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 10px;
-    letter-spacing: 2px;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.9rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 8px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
 }
 
 #score-board, #high-score-board {
     position: absolute;
-    top: 20px;
-    font-size: 1.2rem;
-    font-weight: 400;
-    background: var(--glass-bg);
-    padding: 8px 15px;
-    border-radius: 10px;
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(5px);
+    top: 18px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 1px;
+    padding: 5px 11px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: rgba(250,250,248,0.92);
 }
 
-#score-board { right: 20px; color: var(--primary-color); }
-#high-score-board { left: 20px; color: #aaa; }
+#score-board  { right: 18px; color: var(--ink); }
+#high-score-board { left: 18px; color: var(--ink-2); }
 
 #start-screen, #game-over-screen {
     position: absolute;
@@ -87,73 +93,80 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
-    background: rgba(10, 10, 15, 0.85);
-    padding: 40px;
-    border-radius: 25px;
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(10px);
+    background: var(--surface);
+    padding: 36px 44px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
     pointer-events: auto;
     width: 80%;
-    max-width: 400px;
-    transition: all 0.3s ease;
+    max-width: 380px;
+    transition: all 0.28s ease;
+    box-shadow: 0 4px 32px rgba(44,40,37,0.08);
 }
 
 .hidden {
     opacity: 0;
     visibility: hidden;
-    transform: translate(-50%, -40%) scale(0.9);
+    transform: translate(-50%, -46%) scale(0.97);
 }
 
 h2 {
-    font-size: 2rem;
-    margin-bottom: 15px;
-    color: var(--primary-color);
+    font-family: 'Playfair Display', serif;
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--ink);
+    letter-spacing: 1px;
 }
 
 p {
-    margin-bottom: 25px;
-    color: #ccc;
-    font-size: 1.1rem;
+    margin-bottom: 22px;
+    color: var(--ink-2);
+    font-size: 0.78rem;
+    letter-spacing: 0.4px;
+    line-height: 1.8;
 }
 
 button {
-    background: linear-gradient(45deg, var(--primary-color), #00bfa5);
-    color: #000;
+    background: var(--ink);
+    color: var(--surface);
     border: none;
-    padding: 12px 30px;
-    font-size: 1.1rem;
-    font-weight: 700;
+    padding: 11px 30px;
+    font-size: 0.72rem;
+    font-weight: 500;
     border-radius: 50px;
     cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-    font-family: 'Outfit', sans-serif;
+    transition: opacity 0.18s, transform 0.18s;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 2px;
     text-transform: uppercase;
 }
 
 button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(0, 255, 204, 0.3);
+    opacity: 0.72;
+    transform: translateY(-1px);
 }
 
 button:active {
     transform: translateY(0);
+    opacity: 0.88;
 }
 
 @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
+    0%, 100% { transform: scale(1); }
+    50%       { transform: scale(1.025); }
 }
 
 #start-button {
-    animation: pulse 2s infinite ease-in-out;
+    animation: pulse 2.8s infinite ease-in-out;
 }
 
+/* ── 旋轉提示 ─────────────────────── */
 #rotate-overlay {
     display: none;
     position: fixed;
     inset: 0;
-    background: var(--bg-color);
+    background: var(--bg);
     z-index: 1000;
     flex-direction: column;
     justify-content: center;
@@ -162,54 +175,48 @@ button:active {
 }
 
 #rotate-overlay .rotate-icon {
-    font-size: 4rem;
+    font-size: 3.5rem;
     animation: rotate-hint 1.5s ease-in-out infinite;
 }
 
 #rotate-overlay p {
-    font-size: 1.2rem;
-    text-align: center;
-    color: var(--primary-color);
+    font-size: 0.9rem;
+    color: var(--ink-2);
     margin: 0;
-    line-height: 1.8;
+    line-height: 2;
 }
 
 @keyframes rotate-hint {
     0%, 100% { transform: rotate(0deg); }
-    50% { transform: rotate(90deg); }
+    50%       { transform: rotate(90deg); }
 }
 
-/* 手機直式：顯示旋轉提示 */
+/* ── 手機直式：顯示旋轉提示 ──────── */
 @media (orientation: portrait) and (max-width: 768px) {
     #rotate-overlay { display: flex; }
 }
 
+/* ── 手機直式 ────────────────────── */
 @media (orientation: portrait) and (max-width: 600px) {
-    #game-container {
-        width: 100vw;
-        border-radius: 0;
-    }
+    #game-container { width: 100vw; border-radius: 0; }
     #ui-layer { padding: 10px; }
-    #title { font-size: 1.4rem; margin-bottom: 5px; }
-    #score-board, #high-score-board { font-size: 0.85rem; padding: 5px 10px; top: 10px; }
-    h2 { font-size: 1.2rem; margin-bottom: 10px; }
-    p { font-size: 0.85rem; margin-bottom: 12px; }
-    button { padding: 10px 22px; font-size: 0.9rem; }
+    #title { font-size: 1.3rem; margin-bottom: 4px; }
+    #score-board, #high-score-board { font-size: 0.65rem; padding: 4px 8px; top: 10px; }
+    h2 { font-size: 1.2rem; margin-bottom: 8px; }
+    p { font-size: 0.72rem; margin-bottom: 12px; }
+    button { padding: 9px 22px; font-size: 0.68rem; }
     #start-screen, #game-over-screen { padding: 20px; width: 88%; }
 }
 
-/* 手機橫式 */
+/* ── 手機橫式 ────────────────────── */
 @media (orientation: landscape) and (max-height: 500px) {
     body { align-items: center; }
-    #game-container {
-        width: min(98vw, calc(86vh * 2));
-        border-radius: 10px;
-    }
+    #game-container { width: min(98vw, calc(86vh * 2)); border-radius: 10px; }
     #ui-layer { padding: 8px; }
-    #title { font-size: 1.1rem; margin-bottom: 4px; }
-    #score-board, #high-score-board { font-size: 0.75rem; padding: 4px 8px; top: 8px; }
-    h2 { font-size: 1rem; margin-bottom: 8px; }
-    p { font-size: 0.78rem; margin-bottom: 10px; }
-    button { padding: 8px 18px; font-size: 0.82rem; }
-    #start-screen, #game-over-screen { padding: 14px; width: 80%; }
+    #title { font-size: 1.05rem; margin-bottom: 3px; }
+    #score-board, #high-score-board { font-size: 0.62rem; padding: 3px 7px; top: 8px; }
+    h2 { font-size: 0.95rem; margin-bottom: 6px; }
+    p { font-size: 0.68rem; margin-bottom: 8px; }
+    button { padding: 7px 18px; font-size: 0.64rem; }
+    #start-screen, #game-over-screen { padding: 12px; width: 80%; }
 }

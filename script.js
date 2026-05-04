@@ -9,12 +9,108 @@ const scoreEl = document.getElementById('score');
 const highScoreEl = document.getElementById('high-score');
 const finalScoreEl = document.getElementById('final-score');
 
-// Load Assets
-const dinoImg = new Image();
-dinoImg.src = 'assets/dino.png';
+// ── Canvas 繪製：恐龍（墨水插畫風格剪影） ────────────────────────────────
+function drawDinoShape(ctx, x, y, w, h) {
+    ctx.save();
+    ctx.fillStyle = '#2C2825';
 
-const cactusImg = new Image();
-cactusImg.src = 'assets/cactus.png';
+    // 頸部 + 頭部：一筆完成
+    ctx.beginPath();
+    ctx.moveTo(x + w*0.56, y + h*0.44);
+    ctx.lineTo(x + w*0.65, y + h*0.18);
+    ctx.quadraticCurveTo(x + w*0.80, y + h*0.08, x + w*0.97, y + h*0.18);
+    ctx.quadraticCurveTo(x + w*1.02, y + h*0.30, x + w*0.96, y + h*0.40);
+    ctx.quadraticCurveTo(x + w*0.86, y + h*0.47, x + w*0.72, y + h*0.44);
+    ctx.lineTo(x + w*0.64, y + h*0.40);
+    ctx.lineTo(x + w*0.60, y + h*0.44);
+    ctx.closePath();
+    ctx.fill();
+
+    // 身體
+    ctx.beginPath();
+    ctx.ellipse(x + w*0.44, y + h*0.60, w*0.26, h*0.20, -0.08, 0, Math.PI*2);
+    ctx.fill();
+
+    // 尾巴
+    ctx.beginPath();
+    ctx.moveTo(x + w*0.20, y + h*0.54);
+    ctx.quadraticCurveTo(x + w*0.07, y + h*0.58, x + w*0.02, y + h*0.72);
+    ctx.lineTo(x + w*0.10, y + h*0.67);
+    ctx.quadraticCurveTo(x + w*0.20, y + h*0.63, x + w*0.26, y + h*0.58);
+    ctx.closePath();
+    ctx.fill();
+
+    // 前腳
+    ctx.beginPath();
+    ctx.moveTo(x + w*0.48, y + h*0.76);
+    ctx.lineTo(x + w*0.44, y + h*0.97);
+    ctx.lineTo(x + w*0.34, y + h*1.00);
+    ctx.lineTo(x + w*0.32, y + h*0.93);
+    ctx.lineTo(x + w*0.40, y + h*0.90);
+    ctx.lineTo(x + w*0.44, y + h*0.76);
+    ctx.closePath();
+    ctx.fill();
+
+    // 後腳
+    ctx.beginPath();
+    ctx.moveTo(x + w*0.34, y + h*0.76);
+    ctx.lineTo(x + w*0.30, y + h*0.95);
+    ctx.lineTo(x + w*0.20, y + h*0.98);
+    ctx.lineTo(x + w*0.18, y + h*0.91);
+    ctx.lineTo(x + w*0.26, y + h*0.88);
+    ctx.lineTo(x + w*0.30, y + h*0.76);
+    ctx.closePath();
+    ctx.fill();
+
+    // 小手
+    ctx.beginPath();
+    ctx.moveTo(x + w*0.60, y + h*0.50);
+    ctx.lineTo(x + w*0.68, y + h*0.60);
+    ctx.lineTo(x + w*0.72, y + h*0.56);
+    ctx.lineTo(x + w*0.64, y + h*0.46);
+    ctx.closePath();
+    ctx.fill();
+
+    // 眼睛（白色）
+    ctx.fillStyle = '#F5F2EC';
+    ctx.beginPath();
+    ctx.arc(x + w*0.84, y + h*0.24, w*0.038, 0, Math.PI*2);
+    ctx.fill();
+
+    ctx.restore();
+}
+
+// ── Canvas 繪製：仙人掌（幾何剪影） ──────────────────────────────────────
+function drawCactusShape(ctx, x, y, w, h) {
+    ctx.save();
+    ctx.fillStyle = '#9A9488';
+
+    const tw = w * 0.22;
+    const cx = x + w * 0.50;
+    const aw = tw * 0.88; // 手臂粗細與主幹等比
+
+    // 主幹
+    ctx.fillRect(cx - tw/2, y + h*0.12, tw, h*0.88);
+    ctx.beginPath();
+    ctx.arc(cx, y + h*0.12, tw/2, Math.PI, 0);
+    ctx.fill();
+
+    // 左手臂（橫 + 豎）
+    ctx.fillRect(x + w*0.10, y + h*0.34, cx - tw/2 - x - w*0.10, aw);
+    ctx.fillRect(x + w*0.10, y + h*0.18, aw, h*0.30);
+    ctx.beginPath();
+    ctx.arc(x + w*0.10 + aw/2, y + h*0.18, aw/2, Math.PI, 0);
+    ctx.fill();
+
+    // 右手臂（橫 + 豎）
+    ctx.fillRect(cx + tw/2, y + h*0.26, x + w*0.90 - cx - tw/2, aw);
+    ctx.fillRect(x + w*0.78, y + h*0.12, aw, h*0.28);
+    ctx.beginPath();
+    ctx.arc(x + w*0.78 + aw/2, y + h*0.12, aw/2, Math.PI, 0);
+    ctx.fill();
+
+    ctx.restore();
+}
 
 // Game State
 let gameActive = false;
@@ -48,13 +144,7 @@ const player = {
     jumping: false,
     jumpCount: 0,
     draw() {
-        if (dinoImg.complete) {
-            ctx.drawImage(dinoImg, this.x, this.y, this.width, this.height);
-        } else {
-            // Fallback
-            ctx.fillStyle = '#00ffcc';
-            ctx.fillRect(this.x, this.y, this.width, this.height);
-        }
+        drawDinoShape(ctx, this.x, this.y, this.width, this.height);
     },
     update() {
         if (flyModeActive) {
@@ -97,13 +187,7 @@ class Obstacle {
     }
 
     draw() {
-        if (cactusImg.complete) {
-            ctx.drawImage(cactusImg, this.x, this.y, this.width, this.height);
-        } else {
-            // Fallback
-            ctx.fillStyle = '#ff0077';
-            ctx.fillRect(this.x, this.y, this.width, this.height);
-        }
+        drawCactusShape(ctx, this.x, this.y, this.width, this.height);
     }
 
     update() {
@@ -141,21 +225,17 @@ function spawnObstacle() {
 }
 
 function drawBackground() {
-    // Draw Ground
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-    ctx.lineWidth = 2;
+    // 地面線條
+    ctx.strokeStyle = '#D4CEC4';
+    ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(0, groundY);
     ctx.lineTo(canvas.width, groundY);
     ctx.stroke();
 
-    // Decorative stars or bits
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
-    for(let i=0; i<5; i++) {
-        ctx.beginPath();
-        ctx.arc((frameCount * 0.5 + i * 200) % canvas.width, 100 + i * 30, 2, 0, Math.PI * 2);
-        ctx.fill();
-    }
+    // 地面下方輕微填色
+    ctx.fillStyle = 'rgba(212,206,196,0.12)';
+    ctx.fillRect(0, groundY + 1, canvas.width, canvas.height - groundY - 1);
 }
 
 let debugHitbox = false;
@@ -180,7 +260,7 @@ function checkCollision(p, o) {
            pBox.y + pBox.h > oBox.y;
 }
 
-const CONFETTI_COLORS = ['#ff0077', '#00ffcc', '#ffcc00', '#ff6600', '#9900ff', '#00ccff', '#ff99cc'];
+const CONFETTI_COLORS = ['#E8956A', '#6AABAE', '#B8916A', '#9B82B8', '#72AA82', '#C97070', '#C4AB88'];
 
 function spawnConfetti() {
     for (let i = 0; i < 80; i++) {
@@ -284,7 +364,7 @@ function gameLoop() {
 
     if (flyModeActive) {
         const secs = Math.ceil((flyModeEndTime - performance.now()) / 1000);
-        ctx.fillStyle = '#ffcc00';
+        ctx.fillStyle = '#B8916A';
         ctx.font = `bold ${Math.round(canvas.height * 0.07)}px Outfit, sans-serif`;
         ctx.textAlign = 'center';
         ctx.fillText(`✨ 飛翔模式 ${secs}s`, canvas.width / 2, canvas.height * 0.18);
