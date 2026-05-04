@@ -129,10 +129,21 @@ function drawBackground() {
     }
 }
 
+let debugHitbox = false;
+
 function checkCollision(p, o) {
-    // Shrink hitboxes slightly for better feel
-    const pBox = { x: p.x + 10, y: p.y + 5, w: p.width - 20, h: p.height - 10 };
-    const oBox = { x: o.x + 5, y: o.y + 5, w: o.width - 10, h: o.height - 10 };
+    const pBox = { x: p.x + p.width * 0.18, y: p.y + p.height * 0.08,
+                   w: p.width * 0.64,        h: p.height * 0.85 };
+    const oBox = { x: o.x + o.width * 0.12, y: o.y + o.height * 0.05,
+                   w: o.width * 0.76,        h: o.height * 0.90 };
+
+    if (debugHitbox) {
+        ctx.strokeStyle = 'rgba(0,255,0,0.8)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(pBox.x, pBox.y, pBox.w, pBox.h);
+        ctx.strokeStyle = 'rgba(255,80,80,0.8)';
+        ctx.strokeRect(oBox.x, oBox.y, oBox.w, oBox.h);
+    }
 
     return pBox.x < oBox.x + oBox.w &&
            pBox.x + pBox.w > oBox.x &&
@@ -211,6 +222,9 @@ window.addEventListener('keydown', (e) => {
             player.jump();
         }
         e.preventDefault();
+    }
+    if (e.code === 'KeyD') {
+        debugHitbox = !debugHitbox;
     }
 });
 
