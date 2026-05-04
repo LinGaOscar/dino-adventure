@@ -29,6 +29,7 @@ let flyModeActive = false;
 let flyModeEndTime = 0;
 let confettiParticles = [];
 let graceEndTime = 0;
+let nextSpawnFrame = 100;
 
 // Game Config（依 canvas 尺寸動態計算，初始值對應 400px 高度）
 let gravity = 0.6;
@@ -133,8 +134,9 @@ window.addEventListener('resize', resize);
 resize();
 
 function spawnObstacle() {
-    if (frameCount % 120 === 0 || (frameCount % 80 === 0 && Math.random() > 0.7)) {
+    if (frameCount >= nextSpawnFrame) {
         obstacles.push(new Obstacle());
+        nextSpawnFrame = frameCount + 90 + Math.floor(Math.random() * 70);
     }
 }
 
@@ -161,8 +163,8 @@ let debugHitbox = false;
 function checkCollision(p, o) {
     const pBox = { x: p.x + p.width * 0.18, y: p.y + p.height * 0.08,
                    w: p.width * 0.64,        h: p.height * 0.85 };
-    const oBox = { x: o.x + o.width * 0.12, y: o.y + o.height * 0.05,
-                   w: o.width * 0.76,        h: o.height * 0.90 };
+    const oBox = { x: o.x + o.width * 0.25, y: o.y + o.height * 0.10,
+                   w: o.width * 0.50,        h: o.height * 0.80 };
 
     if (debugHitbox) {
         ctx.strokeStyle = 'rgba(0,255,0,0.8)';
@@ -303,6 +305,7 @@ function startGame() {
     flyModeActive = false;
     confettiParticles = [];
     graceEndTime = 0;
+    nextSpawnFrame = 100;
     player.y = groundY - player.height;
     player.dy = 0;
     player.jumpCount = 0;
