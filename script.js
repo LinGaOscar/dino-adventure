@@ -354,8 +354,10 @@ function gameLoop() {
             obstacles.splice(i, 1);
             score += 10;
             scoreEl.textContent = score;
-            obstaclesPassed++;
-            if (obstaclesPassed % 5 === 0) startFlyMode();
+            if (!flyModeActive) {
+                obstaclesPassed++;
+                if (obstaclesPassed % 5 === 0) startFlyMode();
+            }
         }
     }
 
