@@ -121,6 +121,7 @@ highScoreEl.textContent = highScore;
 let animationId;
 let frameCount = 0;
 let obstaclesPassed = 0;
+let flyModeTriggerAt = 10;
 let flyModeActive = false;
 let flyModeEndTime = 0;
 let confettiParticles = [];
@@ -356,7 +357,10 @@ function gameLoop() {
             scoreEl.textContent = score;
             if (!flyModeActive) {
                 obstaclesPassed++;
-                if (obstaclesPassed % 5 === 0) startFlyMode();
+                if (obstaclesPassed >= flyModeTriggerAt) {
+                    flyModeTriggerAt += 10;
+                    startFlyMode();
+                }
             }
         }
     }
@@ -387,6 +391,7 @@ function startGame() {
     obstacles = [];
     frameCount = 0;
     obstaclesPassed = 0;
+    flyModeTriggerAt = 10;
     flyModeActive = false;
     confettiParticles = [];
     graceEndTime = 0;
