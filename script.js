@@ -364,10 +364,13 @@ function gameLoop() {
 
     if (flyModeActive) {
         const secs = Math.ceil((flyModeEndTime - performance.now()) / 1000);
-        ctx.fillStyle = '#B8916A';
-        ctx.font = `bold ${Math.round(canvas.height * 0.07)}px Outfit, sans-serif`;
+        const fontSize = Math.round(canvas.height * 0.07);
+        ctx.font = `600 ${fontSize}px 'Playfair Display', serif`;
         ctx.textAlign = 'center';
-        ctx.fillText(`✨ 飛翔模式 ${secs}s`, canvas.width / 2, canvas.height * 0.18);
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#B8916A';
+        ctx.fillText(`✦ 飛翔模式 ${secs}s ✦`, canvas.width / 2, canvas.height / 2);
+        ctx.textBaseline = 'alphabetic';
         ctx.textAlign = 'left';
     }
 
