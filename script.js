@@ -24,6 +24,10 @@ highScoreEl.textContent = highScore;
 
 let animationId;
 let frameCount = 0;
+let obstaclesPassed = 0;
+let flyModeActive = false;
+let flyModeEndTime = 0;
+let confettiParticles = [];
 
 // Game Config（依 canvas 尺寸動態計算，初始值對應 400px 高度）
 let gravity = 0.6;
@@ -51,6 +55,12 @@ const player = {
         }
     },
     update() {
+        if (flyModeActive) {
+            this.y += (groundY * 0.28 - this.y) * 0.08;
+            this.dy = 0;
+            return;
+        }
+
         if (this.jumping) {
             this.dy += gravity;
             this.y += this.dy;
@@ -64,7 +74,7 @@ const player = {
         }
     },
     jump() {
-        if (this.jumpCount < 2) {
+        if (!flyModeActive && this.jumpCount < 2) {
             this.dy = jumpForce;
             this.jumping = true;
             this.jumpCount++;
@@ -167,6 +177,71 @@ function checkCollision(p, o) {
            pBox.y + pBox.h > oBox.y;
 }
 
+const CONFETTI_COLORS = ['#ff0077', '#00ffcc', '#ffcc00', '#ff6600', '#9900ff', '#00ccff', '#ff99cc'];
+
+function spawnConfetti() {
+    for (let i = 0; i < 80; i++) {
+        confettiParticles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * -canvas.height,
+            vx: (Math.random() - 0.5) * 4,
+            vy: Math.random() * 3 + 2,
+            color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
+            w: Math.random() * 12 + 6,
+            h: Math.random() * 6 + 3,
+            rot: Math.random() * Math.PI * 2,
+            rotSpeed: (Math.random() - 0.5) * 0.15,
+            alpha: 1
+        });
+    }
+}
+
+function updateConfetti() {
+    for (let i = confettiParticles.length - 1; i >= 0; i--) {
+        const p = confettiParticles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rot += p.rotSpeed;
+        if (flyModeActive && p.y > canvas.height + 20) {
+            // 飛翔中循環到頂，維持滿畫面效果
+            p.y = -20;
+            p.x = Math.random() * canvas.width;
+            p.alpha = 1;
+        } else if (!flyModeActive) {
+            p.alpha -= 0.015;
+            if (p.alpha <= 0) confettiParticles.splice(i, 1);
+        }
+    }
+}
+
+function drawConfetti() {
+    confettiParticles.forEach(p => {
+        ctx.save();
+        ctx.globalAlpha = p.alpha;
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+    });
+    ctx.globalAlpha = 1;
+}
+
+function startFlyMode() {
+    flyModeActive = true;
+    flyModeEndTime = performance.now() + 5000;
+    player.jumping = true;
+    player.jumpCount = 2;
+    spawnConfetti();
+}
+
+function endFlyMode() {
+    flyModeActive = false;
+    player.dy = 0;
+    player.jumping = true;
+    player.jumpCount = 1;
+}
+
 function gameLoop() {
     if (!gameActive) return;
 
@@ -179,11 +254,15 @@ function gameLoop() {
 
     spawnObstacle();
 
+    if (flyModeActive && performance.now() >= flyModeEndTime) {
+        endFlyMode();
+    }
+
     for (let i = obstacles.length - 1; i >= 0; i--) {
         obstacles[i].update();
         obstacles[i].draw();
 
-        if (checkCollision(player, obstacles[i])) {
+        if (!flyModeActive && checkCollision(player, obstacles[i])) {
             endGame();
         }
 
@@ -191,7 +270,21 @@ function gameLoop() {
             obstacles.splice(i, 1);
             score += 10;
             scoreEl.textContent = score;
+            obstaclesPassed++;
+            if (obstaclesPassed % 5 === 0) startFlyMode();
         }
+    }
+
+    updateConfetti();
+    drawConfetti();
+
+    if (flyModeActive) {
+        const secs = Math.ceil((flyModeEndTime - performance.now()) / 1000);
+        ctx.fillStyle = '#ffcc00';
+        ctx.font = `bold ${Math.round(canvas.height * 0.07)}px Outfit, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText(`✨ 飛翔模式 ${secs}s`, canvas.width / 2, canvas.height * 0.18);
+        ctx.textAlign = 'left';
     }
 
     frameCount++;
@@ -204,6 +297,9 @@ function startGame() {
     scoreEl.textContent = score;
     obstacles = [];
     frameCount = 0;
+    obstaclesPassed = 0;
+    flyModeActive = false;
+    confettiParticles = [];
     player.y = groundY - player.height;
     player.dy = 0;
     player.jumpCount = 0;
